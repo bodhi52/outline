@@ -291,7 +291,7 @@ class DocumentScene extends React.Component<Props> {
     if (document.isSaving) {
       return;
     }
-
+    console.log(auth);
     // get the latest version of the editor text value
     const text = this.getEditorText ? this.getEditorText() : document.text;
 
@@ -314,20 +314,25 @@ class DocumentScene extends React.Component<Props> {
     try {
       let savedDocument = document;
 
-      if (auth.team?.collaborativeEditing) {
-        // update does not send "text" field to the API, this is a workaround
-        // while the multiplayer editor is toggleable. Once it's finalized
-        // this can be cleaned up to single code path
-        savedDocument = await document.update({
-          ...options,
-          lastRevision: this.lastRevision,
-        });
-      } else {
-        savedDocument = await document.save({
-          ...options,
-          lastRevision: this.lastRevision,
-        });
-      }
+      // if (auth.team?.collaborativeEditing) {
+      //   // update does not send "text" field to the API, this is a workaround
+      //   // while the multiplayer editor is toggleable. Once it's finalized
+      //   // this can be cleaned up to single code path
+      //   savedDocument = await document.update({
+      //     ...options,
+      //     lastRevision: this.lastRevision,
+      //   });
+      // } else {
+      //   savedDocument = await document.save({
+      //     ...options,
+      //     lastRevision: this.lastRevision,
+      //   });
+      // }
+
+      savedDocument = await document.save({
+        ...options,
+        lastRevision: this.lastRevision,
+      });
 
       this.isEditorDirty = false;
       this.lastRevision = savedDocument.revision;
@@ -658,7 +663,7 @@ type MaxWidthProps = {
   showContents?: boolean;
 };
 
-const MaxWidth = styled(Flex) <MaxWidthProps>`
+const MaxWidth = styled(Flex)<MaxWidthProps>`
   // Adds space to the gutter to make room for heading annotations
   padding: 0 32px;
   transition: padding 100ms;

@@ -68,6 +68,10 @@ class BodhiMentionEditor extends React.Component<Props, State> {
     console.log(title);
   };
 
+  onChange = (): void => {
+    console.log("hello");
+  };
+
   handleKeyDown = (event: React.KeyboardEvent): void => {
     switch (event.key) {
       case "Enter": {
@@ -118,6 +122,7 @@ class BodhiMentionEditor extends React.Component<Props, State> {
         return;
       }
     }
+    return;
   };
 
   handleFocusLink = (selectedIndex: number) => {
@@ -145,7 +150,7 @@ class BodhiMentionEditor extends React.Component<Props, State> {
 
     return (
       <Wrapper>
-        <Input value={value} onKeyDown={this.handleKeyDown} />
+        <Input value={value} onKeyDown={this.handleKeyDown} readOnly={true} />
 
         {showResults && (
           <MentionSearchResults id="link-search-results">

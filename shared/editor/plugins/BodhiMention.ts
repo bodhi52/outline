@@ -206,7 +206,7 @@ export default class BodhiMention extends Extension {
           // if( newstate2.text.lastIndexOf(" ")
           this.editor.events.emit(EventType.bodhiMentionMenuOpen, {
             search: newstate2.text,
-            collectionId: "collectinbodhi",
+            collectionId: this.editor.props.id,
           });
 
           return tr;

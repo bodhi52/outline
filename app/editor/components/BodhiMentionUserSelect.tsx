@@ -56,7 +56,7 @@ function usePosition({
   let toPos;
   try {
     fromPos = view.coordsAtPos(selection.from);
-    toPos = view.coordsAtPos(selection.to, -1);
+    toPos = view.coordsAtPos(selection.to);
   } catch (err) {
     console.warn(err);
     return defaultPosition;
@@ -152,22 +152,6 @@ const Wrapper = styled.div<{
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-
-  &::before {
-    content: "";
-    display: block;
-    width: 24px;
-    height: 24px;
-    transform: translateX(-50%) rotate(45deg);
-    background: ${(props) => props.theme.toolbarBackground};
-    border-radius: 3px;
-    z-index: -1;
-    position: absolute;
-    bottom: -2px;
-    left: calc(50% - ${(props) => props.offset || 0}px);
-    pointer-events: none;
-  }
-
   * {
     box-sizing: border-box;
   }

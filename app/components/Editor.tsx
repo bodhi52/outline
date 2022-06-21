@@ -132,7 +132,18 @@ function Editor(props: Props, ref: React.RefObject<SharedEditor> | null) {
     async (term: string, collectionId: string) => {
       //这个地方通过输入查找用户
       // ##bodhi##
-      collectionId = "b106ce4c-713c-4a4a-bb87-02f9e7ce9cca";
+      // const documentId = this.id;
+      // const doc = this.props.document;
+      // console.log("######### this is in save #######");
+      // console.log(collectionId);
+      const documentInEditor = await client.post(`/documents.info`, {
+        id: collectionId,
+      });
+      // console.log(documentInEditor);
+      if (documentInEditor === null) {
+        return [];
+      }
+      collectionId = documentInEditor.data.collectionId;
       const res = await client.post(`/collections.memberships`, {
         id: collectionId,
         limit: 100,
