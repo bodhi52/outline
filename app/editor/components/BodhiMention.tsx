@@ -71,6 +71,8 @@ export default class BodhiMention extends React.Component<Props> {
     const { dispatch, state } = view;
     const { from, to } = state.selection;
     dispatch(view.state.tr.insertText(title + " ", from - search.length, to));
+    /** bodhi undo
+     * 这里要提醒用户，是不是可以发邮件？ */
     onClose();
   };
 

@@ -14,3 +14,4 @@ fakes3/*
 *.log
 .vscode/*
 .vscode
+nohup.out
