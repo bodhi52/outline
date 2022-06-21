@@ -21,6 +21,7 @@ import TableCell from "../nodes/TableCell";
 import TableHeadCell from "../nodes/TableHeadCell";
 import TableRow from "../nodes/TableRow";
 import BlockMenuTrigger from "../plugins/BlockMenuTrigger";
+import BodhiMention from "../plugins/BodhiMention";
 import Folding from "../plugins/Folding";
 import Keys from "../plugins/Keys";
 import basicPackage from "./basic";
@@ -49,6 +50,7 @@ const fullPackage: (typeof Node | typeof Mark | typeof Extension)[] = [
   Folding,
   Keys,
   BlockMenuTrigger,
+  BodhiMention,
 ];
 
 export default fullPackage;

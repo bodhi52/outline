@@ -31,6 +31,8 @@ import Flex from "~/components/Flex";
 import { Dictionary } from "~/hooks/useDictionary";
 import Logger from "~/utils/Logger";
 import BlockMenu from "./components/BlockMenu";
+import BodhiMention from "./components/BodhiMention";
+import { MentionSearchResult } from "./components/BodhiMentionEditor";
 import ComponentView from "./components/ComponentView";
 import EditorContext from "./components/EditorContext";
 import EmojiMenu from "./components/EmojiMenu";
@@ -96,6 +98,17 @@ export type Props = {
     href: string,
     event: MouseEvent | React.MouseEvent<HTMLButtonElement>
   ) => void;
+
+  /** bodhi */
+  onSearchBodhiMention?: (
+    term: string,
+    collectionId: string
+  ) => Promise<MentionSearchResult[]>;
+  /** Callback when user clicks on any link in the document */
+  // onClickBodhiMention: (
+  //   event: MouseEvent | React.MouseEvent<HTMLButtonElement>
+  // ) => void;
+
   /** Callback when user hovers on any link in the document */
   onHoverLink?: (event: MouseEvent) => boolean;
   /** Callback when user clicks on any hashtag in the document */
@@ -127,6 +140,14 @@ type State = {
   blockMenuSearch: string;
   /** If the emoji insert menu is visible */
   emojiMenuOpen: boolean;
+  /** mention is visible */
+  bodhiMentionMenuOpen: boolean;
+  /** search string */
+  bodhiMentionSearch: string;
+
+  bodhiMentionCollectionId: string;
+
+  bodhiMentionSearchResult: MentionSearchResult[];
 };
 
 /**
@@ -160,6 +181,10 @@ export class Editor extends React.PureComponent<
     linkMenuOpen: false,
     blockMenuSearch: "",
     emojiMenuOpen: false,
+    bodhiMentionMenuOpen: false,
+    bodhiMentionSearch: "",
+    bodhiMentionCollectionId: "",
+    bodhiMentionSearchResult: [],
   };
 
   isBlurred: boolean;
@@ -198,6 +223,14 @@ export class Editor extends React.PureComponent<
     this.events.on(EventType.blockMenuClose, this.handleCloseBlockMenu);
     this.events.on(EventType.emojiMenuOpen, this.handleOpenEmojiMenu);
     this.events.on(EventType.emojiMenuClose, this.handleCloseEmojiMenu);
+    this.events.on(
+      EventType.bodhiMentionMenuOpen,
+      this.handleOpenBodhiMentionMenu
+    );
+    this.events.on(
+      EventType.bodhiMentionMenuClose,
+      this.handleCloseBodhiMentionMenu
+    );
   }
 
   /**
@@ -256,7 +289,8 @@ export class Editor extends React.PureComponent<
       !this.state.isEditorFocused &&
       !this.state.blockMenuOpen &&
       !this.state.linkMenuOpen &&
-      !this.state.selectionMenuOpen
+      !this.state.selectionMenuOpen &&
+      !this.state.bodhiMentionMenuOpen
     ) {
       this.isBlurred = true;
       this.props.onBlur?.();
@@ -267,7 +301,8 @@ export class Editor extends React.PureComponent<
       (this.state.isEditorFocused ||
         this.state.blockMenuOpen ||
         this.state.linkMenuOpen ||
-        this.state.selectionMenuOpen)
+        this.state.selectionMenuOpen ||
+        this.state.bodhiMentionMenuOpen)
     ) {
       this.isBlurred = false;
       this.props.onFocus?.();
@@ -561,6 +596,33 @@ export class Editor extends React.PureComponent<
     this.setState({ blockMenuOpen: false });
   };
 
+  private handleOpenBodhiMentionMenu = (queryParam: any) => {
+    this.setState({
+      bodhiMentionMenuOpen: true,
+      blockMenuOpen: false,
+      bodhiMentionSearch: queryParam.search,
+      bodhiMentionCollectionId: queryParam.collectionId,
+      // bodhiMentionSearchResult: values,
+    });
+    if (!this.props.onSearchBodhiMention) {
+      return;
+    }
+    const results = this.props.onSearchBodhiMention(
+      queryParam.search,
+      queryParam.collectionId
+    );
+    // const that = this;
+    results.then((values) => {
+      this.setState({
+        bodhiMentionSearchResult: values,
+      });
+    });
+  };
+
+  private handleCloseBodhiMentionMenu = () => {
+    this.setState({ bodhiMentionMenuOpen: false });
+  };
+
   public focusAtStart = () => {
     const selection = Selection.atStart(this.view.state.doc);
     const transaction = this.view.state.tr.setSelection(selection);
@@ -664,6 +726,16 @@ export class Editor extends React.PureComponent<
                 onFileUploadStop={this.props.onFileUploadStop}
                 onShowToast={this.props.onShowToast}
                 embeds={this.props.embeds}
+              />
+              <BodhiMention
+                view={this.view}
+                dictionary={dictionary}
+                search={this.state.bodhiMentionSearch}
+                isActive={this.state.bodhiMentionMenuOpen}
+                // onSearchUsers={this.props.onSearchBodhiMention}
+                onShowToast={this.props.onShowToast}
+                results={this.state.bodhiMentionSearchResult}
+                onClose={this.handleCloseBodhiMentionMenu}
               />
             </>
           )}

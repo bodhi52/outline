@@ -11,3 +11,6 @@ fakes3/*
 *.pem
 *.key
 *.cert
+*.log
+.vscode/*
+.vscode

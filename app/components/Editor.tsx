@@ -11,7 +11,10 @@ import { supportedImageMimeTypes } from "@shared/utils/files";
 import getDataTransferFiles from "@shared/utils/getDataTransferFiles";
 import parseDocumentSlug from "@shared/utils/parseDocumentSlug";
 import { isInternalUrl } from "@shared/utils/urls";
+// import UsersStore from "~/stores/UsersStore";
 import Document from "~/models/Document";
+// import Membership from "~/models/Membership";
+import User from "~/models/User";
 import ClickablePadding from "~/components/ClickablePadding";
 import ErrorBoundary from "~/components/ErrorBoundary";
 import HoverPreview from "~/components/HoverPreview";
@@ -19,6 +22,7 @@ import type { Props as EditorProps, Editor as SharedEditor } from "~/editor";
 import useDictionary from "~/hooks/useDictionary";
 import useStores from "~/hooks/useStores";
 import useToasts from "~/hooks/useToasts";
+import { client } from "~/utils/ApiClient";
 import { NotFoundError } from "~/utils/errors";
 import { uploadFile } from "~/utils/files";
 import history from "~/utils/history";
@@ -119,6 +123,37 @@ function Editor(props: Props, ref: React.RefObject<SharedEditor> | null) {
             .startsWith(deburr(term).toLowerCase())
             ? -1
             : 1
+      );
+    },
+    [documents]
+  );
+
+  const handleSearchBodhiMention = React.useCallback(
+    async (term: string, collectionId: string) => {
+      //这个地方通过输入查找用户
+      // ##bodhi##
+      collectionId = "b106ce4c-713c-4a4a-bb87-02f9e7ce9cca";
+      const res = await client.post(`/collections.memberships`, {
+        id: collectionId,
+        limit: 100,
+        query: term,
+        permission: "read_write",
+      });
+      const results = res.data.users;
+      return sortBy(
+        results.map((user: User) => {
+          return {
+            title: user.name,
+            subtitle: user.id,
+            url: user.avatarUrl,
+          };
+        }),
+        () => -1
+        // deburr(document.title)
+        //   // .toLowerCase()
+        //   .startsWith(deburr(term).toLowerCase())
+        //   ? -1
+        //   : 1
       );
     },
     [documents]
@@ -266,6 +301,7 @@ function Editor(props: Props, ref: React.RefObject<SharedEditor> | null) {
           onClickLink={onClickLink}
           onSearchLink={handleSearchLink}
           onChange={handleChange}
+          onSearchBodhiMention={handleSearchBodhiMention}
           placeholder={props.placeholder || ""}
           defaultValue={props.defaultValue || ""}
         />
