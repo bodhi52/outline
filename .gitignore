@@ -17,3 +17,4 @@ fakes3/*
 .vscode
 nohup.out
 yarn.lock*
+yarn.lock
