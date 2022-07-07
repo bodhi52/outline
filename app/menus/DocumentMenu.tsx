@@ -422,6 +422,13 @@ function DocumentMenu({
             },
             {
               type: "button",
+              title: t("Download") + " docx",
+              onClick: document.downloadDocx,
+              visible: !!can.download,
+              icon: <DownloadIcon />,
+            },
+            {
+              type: "button",
               title: t("Print"),
               onClick: handlePrint,
               visible: !!showDisplayOptions,

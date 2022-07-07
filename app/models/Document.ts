@@ -403,4 +403,22 @@ export default class Document extends ParanoidModel {
     a.download = `${this.titleWithDefault}.md`;
     a.click();
   };
+
+  downloadDocx = async () => {
+    // Ensure the document is upto date with latest server contents
+    await this.fetch();
+    const body = unescape(this.text);
+    const blob = new Blob([`# ${this.title}\n\n${body}`], {
+      type: "text/markdown",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    // Firefox support requires the anchor tag be in the DOM to trigger the dl
+    if (document.body) {
+      document.body.appendChild(a);
+    }
+    a.href = url;
+    a.download = `${this.titleWithDefault}.md`;
+    a.click();
+  };
 }
