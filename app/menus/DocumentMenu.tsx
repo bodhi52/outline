@@ -454,7 +454,7 @@ function DocumentMenu({
                 />
               </Style>
             )}
-            {showDisplayOptions && !isMobile && (
+            {showDisplayOptions && !isMobile && can.update && (
               <Style>
                 <ToggleMenuItem
                   width={26}

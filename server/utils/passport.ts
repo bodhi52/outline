@@ -60,11 +60,7 @@ export class StateStore {
 
       url.host = appDomain.host;
 
-      return callback(
-        AuthRedirectError(`redirect to: ${url.toString()}`, url.toString()),
-        false,
-        token
-      );
+      return callback(AuthRedirectError(``, url.toString()), false, token);
     }
 
     // Destroy the one-time pad token and ensure it matches
@@ -86,7 +82,6 @@ export class StateStore {
 export async function request(endpoint: string, accessToken: string) {
   const response = await fetch(endpoint, {
     method: "GET",
-    credentials: "same-origin",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
